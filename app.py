@@ -695,5 +695,9 @@ def trip_history():
 def tracking():
     return render_template('tracking.html')
 
+@app.route('/driver_handover')
+def driver_handover():
+    return render_template('driver_handover.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
