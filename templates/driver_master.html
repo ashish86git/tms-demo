@@ -1,0 +1,169 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">🚚 Driver Master</h2>
+        <p class="text-muted">Manage and register your drivers here</p>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Driver List</h5>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr class="text-center">
+                        <th>Driver ID</th>
+                        <th>Name</th>
+                        <th>License No.</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>Availability</th>
+                        <th>Shift</th>
+                        <!-- New Column for Financials -->
+                        <th>Salary</th>
+                        <th>Aadhar</th>
+                        <th>License</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Assuming your Flask route passes a combined dictionary for each row -->
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.driver_id }}</td>
+                        <td>{{ row.driver_name }}</td>
+                        <td>{{ row.license_number }}</td>
+                        <td>{{ row.contact_number }}</td>
+                        <td>{{ row.address }}</td>
+                        <td>{{ row.availability }}</td>
+                        <td>{{ row.shift_info }}</td>
+                        <!-- Displaying the new salary data -->
+                        <td>{{ row.salary }}</td>
+                        <td>
+                            {% if row.aadhar_file %}
+                                <a href="{{ url_for('static', filename='uploads/' + row.aadhar_file) }}" target="_blank" class="btn btn-outline-primary btn-sm">View</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if row.license_file %}
+                                <a href="{{ url_for('static', filename='uploads/' + row.license_file) }}" target="_blank" class="btn btn-outline-secondary btn-sm">View</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add New Driver Form Card -->
+    <!-- Add New Driver Form Card -->
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Add New Driver</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Driver ID</label>
+                        <input type="text" name="driver_id" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Driver Name</label>
+                        <input type="text" name="driver_name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">License Number</label>
+                        <input type="text" name="license_number" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="2" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Availability</label>
+                        <select name="availability" class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="Available">Available</option>
+                            <option value="Unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Shift Info</label>
+                        <input type="text" name="shift_info" class="form-control" required>
+                    </div>
+
+                    <!-- Vehicle ID dropdown added -->
+                    <div class="col-md-6">
+                        <label class="form-label">Vehicle ID</label>
+                        <select name="vehicle_id" class="form-select" required>
+                            <option value="">-- Select Vehicle --</option>
+                            {% for v in fleet_data %}
+                                <option value="{{ v }}">{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Salary field -->
+                    <div class="col-md-6">
+                        <label class="form-label">Salary</label>
+                        <input type="text" name="salary" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Upload Aadhar</label>
+                        <input type="file" name="aadhar_file" id="aadhar_file" class="form-control" accept="image/*,.pdf" required>
+                        <div id="aadhar_preview" class="mt-2"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Upload License</label>
+                        <input type="file" name="license_file" id="license_file" class="form-control" accept="image/*,.pdf" required>
+                        <div id="license_preview" class="mt-2"></div>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-success">Add Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<!-- File Preview Script -->
+<script>
+    function previewFile(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        input.addEventListener('change', function () {
+            const file = this.files[0];
+            preview.innerHTML = '';
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (file.type.startsWith('image/')) {
+                        preview.innerHTML = `<img src="${e.target.result}" class="img-thumbnail" style="max-width:200px;">`;
+                    } else if (file.type === 'application/pdf') {
+                        preview.innerHTML = `<embed src="${e.target.result}" type="application/pdf" width="200" height="200"/>`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    previewFile('aadhar_file', 'aadhar_preview');
+    previewFile('license_file', 'license_preview');
+</script>
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center text-primary fw-bold mb-4">
+        <i class="bi bi-box-seam-fill me-2"></i>Orders Management
+    </h2>
+
+    <!-- Orders Table -->
+    {% if data %}
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-dark text-white fw-semibold text-center">Orders List</div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle mb-0">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Created Date</th>
+                        <th>Order Type</th>
+                        <th>Pickup</th>
+                        <th>Drop</th>
+                        <th>Volume</th>
+                        <th>Weight</th>
+                        <th>Priority</th>
+                        <th>Expected</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr class="text-center">
+                        <td>{{ row['order_id'] }}</td>
+                        <td>{{ row['customer_name'] }}</td>
+                        <td>{{ row['created_date'] }}</td>
+                        <td>{{ row['order_type'] }}</td>
+                        <td>{{ row['pickup_location_latlon'] }}</td>
+                        <td>{{ row['drop_location_latlon'] }}</td>
+                        <td>{{ row['volume_cbm'] }}</td>
+                        <td>{{ row['weight_kg'] }}</td>
+                        <td>{{ row['delivery_priority'] }}</td>
+                        <td>{{ row['expected_delivery'] }}</td>
+                        <td>{{ row['amount'] }}</td>
+                        <td>{{ row['status'] }}</td>
+                        <td>
+                            <!-- Edit Button -->
+                            <!-- Edit Button -->
+                            <a href="/edit_order/{{ row['order_id'] }}" class="btn btn-sm btn-outline-warning me-1" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <!-- Delete Form Button -->
+                            <form method="POST" action="/delete_order/{{ row['order_id'] }}" style="display:inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center shadow-sm">No orders found. Please add or upload orders.</div>
+    {% endif %}
+
+    <!-- Add Order Form -->
+    <div class="accordion mb-5" id="orderFormAccordion">
+        <div class="accordion-item shadow-sm">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button bg-primary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForm" aria-expanded="true" aria-controls="collapseForm">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Order
+                </button>
+            </h2>
+            <div id="collapseForm" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#orderFormAccordion">
+                <div class="accordion-body">
+                    <form method="POST" action="/orders" class="row g-3 needs-validation" novalidate>
+                        <div class="col-md-4">
+                            <label class="form-label">Order ID</label>
+                            <input type="text" name="order_id" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Customer Name</label>
+                            <input type="text" name="customer_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Created Date</label>
+                            <input type="date" name="created_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Order Type</label>
+                            <select name="order_type" class="form-select" required>
+                                <option value="">Choose...</option>
+                                <option value="Standard">Standard</option>
+                                <option value="Express">Express</option>
+                                <option value="Bulk">Bulk</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Pickup Location (Lat, Lon)</label>
+                            <input type="text" name="pickup_location_latlon" class="form-control" placeholder="e.g., 28.7041,77.1025" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Drop Location (Lat, Lon)</label>
+                            <input type="text" name="drop_location_latlon" class="form-control" placeholder="e.g., 19.0760,72.8777" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Volume (CBM)</label>
+                            <input type="number" step="0.01" name="volume_cbm" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Weight (KG)</label>
+                            <input type="number" step="0.01" name="weight_kg" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Delivery Priority</label>
+                            <select name="delivery_priority" class="form-select" required>
+                                <option value="">Choose...</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Expected Delivery</label>
+                            <input type="date" name="expected_delivery" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" step="0.01" name="amount" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="">Choose...</option>
+                                <option value="Pending">Pending</option>
+                                <option value="In Transit">In Transit</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100 mt-3">
+                                <i class="bi bi-save-fill me-2"></i>Add Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Orders CSV -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white fw-semibold">
+            <i class="bi bi-file-earmark-spreadsheet-fill me-2"></i>Upload Orders (CSV)
+        </div>
+        <div class="card-body">
+            <form method="POST" action="/upload_orders" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="orders_file" class="form-label">Select CSV File</label>
+                    <input type="file" name="orders_file" id="orders_file" class="form-control" accept=".csv" required>
+                    <div class="invalid-feedback">Please upload a valid CSV file.</div>
+                </div>
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-upload me-2"></i>Upload Orders
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Tooltip and Validation Script -->
+<script>
+    // Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+
+    // Client-side validation
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

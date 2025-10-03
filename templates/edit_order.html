@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="text-primary">Edit Order - {{ order['Order_ID'] }}</h3>
+    <form method="POST" class="row g-3 needs-validation" novalidate>
+        <div class="col-md-4">
+            <label class="form-label">Customer Name</label>
+            <input type="text" name="customer_name" class="form-control" value="{{ order['Customer_Name'] }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Order Type</label>
+            <select name="order_type" class="form-select" required>
+                <option value="Standard" {{ 'selected' if order['Order_Type'] == 'Standard' else '' }}>Standard</option>
+                <option value="Express" {{ 'selected' if order['Order_Type'] == 'Express' else '' }}>Express</option>
+                <option value="Bulk" {{ 'selected' if order['Order_Type'] == 'Bulk' else '' }}>Bulk</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Pickup Location</label>
+            <input type="text" name="Pickup_Location_LatLon" class="form-control" value="{{ order['Pickup_Location_LatLon'] }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Drop Location</label>
+            <input type="text" name="Drop_Location_LatLon" class="form-control" value="{{ order['Drop_Location_LatLon'] }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Volume (CBM)</label>
+            <input type="number" step="0.01" name="Volume_CBM" class="form-control" value="{{ order['Volume_CBM'] }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Weight (KG)</label>
+            <input type="number" step="0.01" name="Weight_KG" class="form-control" value="{{ order['Weight_KG'] }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Delivery Priority</label>
+            <select name="Delivery_Priority" class="form-select" required>
+                <option value="Low" {{ 'selected' if order['Delivery_Priority'] == 'Low' else '' }}>Low</option>
+                <option value="Medium" {{ 'selected' if order['Delivery_Priority'] == 'Medium' else '' }}>Medium</option>
+                <option value="High" {{ 'selected' if order['Delivery_Priority'] == 'High' else '' }}>High</option>
+                <option value="Urgent" {{ 'selected' if order['Delivery_Priority'] == 'Urgent' else '' }}>Urgent</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Expected Delivery</label>
+            <input type="date" name="Expected_Delivery" class="form-control" value="{{ order['Expected_Delivery'] }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select" required>
+                <option value="Pending" {{ 'selected' if order['Status'] == 'Pending' else '' }}>Pending</option>
+                <option value="In Transit" {{ 'selected' if order['Status'] == 'In Transit' else '' }}>In Transit</option>
+                <option value="Delivered" {{ 'selected' if order['Status'] == 'Delivered' else '' }}>Delivered</option>
+                <option value="Cancelled" {{ 'selected' if order['Status'] == 'Cancelled' else '' }}>Cancelled</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Update Order</button>
+            <a href="{{ url_for('orders') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

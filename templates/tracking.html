@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Live GPS Tracking Dashboard</h2>
+
+    <!-- Live Map Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Live Vehicle Locations (Google Maps View)</h5>
+            <div id="map" style="height: 500px; border-radius: 8px;"></div>
+        </div>
+    </div>
+
+    <!-- Vehicle Info Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Vehicle Tracking Info</h5>
+            <table class="table table-hover" id="tracking-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Vehicle ID</th>
+                        <th>Driver</th>
+                        <th>Location</th>
+                        <th>Last Updated</th>
+                        <th>Status</th>
+                        <th>Route</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filled via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Google Maps JS API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+
+<!-- Custom Map & Data Script -->
+<script>
+// Dummy vehicle data
+const vehicles = [
+    { vehicle_id: 'TRK-101', driver: 'Rajesh Kumar', lat: 28.6139, lon: 77.2090, status: 'Moving', route: 'Route A', last_updated: '2025-05-03 11:45 AM' },
+    { vehicle_id: 'TRK-102', driver: 'Amit Singh', lat: 28.7041, lon: 77.1025, status: 'Idle', route: 'Route B', last_updated: '2025-05-03 11:30 AM' }
+];
+
+// Initialize Google Map
+let map;
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 28.6139, lng: 77.2090 }, // New Delhi default center
+        zoom: 12,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    // Loop through vehicles and add markers to map
+    vehicles.forEach(vehicle => {
+        const marker = new google.maps.Marker({
+            position: { lat: vehicle.lat, lng: vehicle.lon },
+            map: map,
+            title: vehicle.vehicle_id
+        });
+
+        // Add info window for each vehicle
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <strong>${vehicle.vehicle_id}</strong><br/>
+                Driver: ${vehicle.driver}<br/>
+                Status: ${vehicle.status}<br/>
+                Location: ${vehicle.lat.toFixed(4)}, ${vehicle.lon.toFixed(4)}
+            `
+        });
+
+        marker.addListener('click', function() {
+            infoWindow.open(map, marker);
+        });
+
+        // Add route (just a straight line for simplicity)
+        const routeCoordinates = [
+            { lat: vehicle.lat, lng: vehicle.lon },  // Starting point
+            { lat: 28.7041, lng: 77.1025 }           // Ending point (just for demo)
+        ];
+
+        const routePath = new google.maps.Polyline({
+            path: routeCoordinates,
+            geodesic: true,
+            strokeColor: '#FF5733',
+            strokeOpacity: 1.0,
+            strokeWeight: 4
+        });
+
+        routePath.setMap(map);
+    });
+
+    // Populate vehicle table with dummy data
+    const tableBody = document.querySelector('#tracking-table tbody');
+    vehicles.forEach(vehicle => {
+        const row = `
+            <tr>
+                <td>${vehicle.vehicle_id}</td>
+                <td>${vehicle.driver}</td>
+                <td>${vehicle.lat.toFixed(4)}, ${vehicle.lon.toFixed(4)}</td>
+                <td>${vehicle.last_updated}</td>
+                <td><span class="badge bg-${vehicle.status === 'Moving' ? 'success' : 'secondary'}">${vehicle.status}</span></td>
+                <td>${vehicle.route}</td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', row);
+    });
+}
+
+// Initialize map once the script loads
+</script>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold text-primary">
+    {% if vehicle %}Edit Vehicle Maintenance{% else %}Add Vehicle Maintenance{% endif %}
+  </h2>
+
+  <form method="POST" action="{{ 
+    vehicle 
+    and url_for('edit_vehicle', id=vehicle.id) 
+    or url_for('add_vehicle') 
+  }}" class="row g-3 needs-validation" novalidate>
+
+    <div class="col-md-4">
+      <label for="vehicle_id" class="form-label">Vehicle ID *</label>
+      <input type="text" name="vehicle_id" id="vehicle_id" class="form-control" required
+        value="{{ vehicle.vehicle_id if vehicle else '' }}">
+      <div class="invalid-feedback">Vehicle ID is required.</div>
+    </div>
+
+    <div class="col-md-4">
+      <label for="vehicle_type" class="form-label">Vehicle Type</label>
+      <input type="text" name="vehicle_type" id="vehicle_type" class="form-control"
+        value="{{ vehicle.vehicle_type if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-4">
+      <label for="model" class="form-label">Model</label>
+      <input type="text" name="model" id="model" class="form-control"
+        value="{{ vehicle.model if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-4">
+      <label for="manufacturer" class="form-label">Manufacturer</label>
+      <input type="text" name="manufacturer" id="manufacturer" class="form-control"
+        value="{{ vehicle.manufacturer if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-2">
+      <label for="year" class="form-label">Year</label>
+      <input type="number" name="year" id="year" class="form-control" min="1900" max="2100"
+        value="{{ vehicle.year if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="current_mileage" class="form-label">Current Mileage (km)</label>
+      <input type="number" name="current_mileage" id="current_mileage" class="form-control"
+        value="{{ vehicle.current_mileage if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="last_service_date" class="form-label">Last Service Date</label>
+      <input type="date" name="last_service_date" id="last_service_date" class="form-control"
+        value="{{ vehicle.last_service_date.strftime('%Y-%m-%d') if vehicle and vehicle.last_service_date else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="next_service_due" class="form-label">Next Service Due</label>
+      <input type="date" name="next_service_due" id="next_service_due" class="form-control"
+        value="{{ vehicle.next_service_due.strftime('%Y-%m-%d') if vehicle and vehicle.next_service_due else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="service_type" class="form-label">Service Type</label>
+      <input type="text" name="service_type" id="service_type" class="form-control"
+        value="{{ vehicle.service_type if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="status" class="form-label">Status</label>
+      <select name="status" id="status" class="form-select">
+        <option value="">Select status</option>
+        <option value="Pending" {% if vehicle and vehicle.status == 'Pending' %}selected{% endif %}>Pending</option>
+        <option value="Completed" {% if vehicle and vehicle.status == 'Completed' %}selected{% endif %}>Completed</option>
+        <option value="In Progress" {% if vehicle and vehicle.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="parts_replaced" class="form-label">Parts Replaced</label>
+      <input type="text" name="parts_replaced" id="parts_replaced" class="form-control"
+        value="{{ vehicle.parts_replaced if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="service_cost" class="form-label">Service Cost (₹)</label>
+      <input type="number" name="service_cost" id="service_cost" step="0.01" class="form-control"
+        value="{{ vehicle.service_cost if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="assigned_driver" class="form-label">Assigned Driver</label>
+      <input type="text" name="assigned_driver" id="assigned_driver" class="form-control"
+        value="{{ vehicle.assigned_driver if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="condition" class="form-label">Condition</label>
+      <input type="text" name="condition" id="condition" class="form-control"
+        value="{{ vehicle.condition if vehicle else '' }}">
+    </div>
+
+    <div class="col-md-12">
+      <label for="notes" class="form-label">Notes</label>
+      <textarea name="notes" id="notes" rows="3" class="form-control">{{ vehicle.notes if vehicle else '' }}</textarea>
+    </div>
+
+    <div class="col-12 mt-3">
+      <button type="submit" class="btn btn-primary">{{ vehicle and "Update" or "Add" }}</button>
+      <a href="{{ url_for('vehicle_maintenance') }}" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+// Bootstrap form validation
+(() => {
+  'use strict'
+  const forms = document.querySelectorAll('.needs-validation')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+{% endblock %}

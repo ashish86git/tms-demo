@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TMS - Login & Signup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS and Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            object-fit: cover;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 220px;
+            background-color: #212529;
+            padding-top: 60px;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .header {
+            position: fixed;
+            left: 220px;
+            top: 0;
+            right: 0;
+            height: 60px;
+            background-color: #0d6efd;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            z-index: 1;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding-top: 80px;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .card-footer {
+            background-color: transparent;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Video -->
+    <video class="bg-video" autoplay muted loop>
+        <source src="{{ url_for('static', filename='video/video.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h5 class="text-center mb-4"><i class="bi bi-truck"></i> TMS Portal</h5>
+        <a href="/" class="active"><i class="bi bi-house-door"></i> Home</a>
+        <a href="#login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+        <a href="#signup"><i class="bi bi-person-plus"></i> Sign Up</a>
+        <a href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/routes"><i class="bi bi-map"></i> Routes</a>
+        <a href="/vehicles"><i class="bi bi-truck-front"></i> Vehicles</a>
+        <a href="/orders"><i class="bi bi-bag-check"></i> Orders</a>
+        <a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h5><i class="bi bi-person-circle me-2"></i>Welcome to Transport Management System</h5>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="auth-container">
+            <div class="text-center mb-3">
+                <h3 class="text-primary fw-bold">Login or Sign Up</h3>
+                <p class="text-muted small">Access your TMS dashboard</p>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if not form_type or form_type == 'login' %}active{% endif %}" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">Login</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if form_type == 'signup' %}active{% endif %}" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">Sign Up</button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Login Form -->
+                <div class="tab-pane fade {% if not form_type or form_type == 'login' %}show active{% endif %}" id="login" role="tabpanel">
+                    <form method="POST" action="/">
+                        <input type="hidden" name="form_type" value="login">
+                        <div class="mb-3">
+                            <label for="login-username" class="form-label">Username</label>
+                            <input type="text" name="username" id="login-username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <input type="password" name="password" id="login-password" class="form-control" required>
+                        </div>
+                        {% if error and form_type == 'login' %}
+                            <div class="alert alert-danger py-1 small">{{ error }}</div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+
+                <!-- Signup Form -->
+                <div class="tab-pane fade {% if form_type == 'signup' %}show active{% endif %}" id="signup" role="tabpanel">
+                    <form method="POST" action="/">
+                        <input type="hidden" name="form_type" value="signup">
+                        <div class="mb-3">
+                            <label for="signup-username" class="form-label">Username</label>
+                            <input type="text" name="username" id="signup-username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-email" class="form-label">Email</label>
+                            <input type="email" name="email" id="signup-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-password" class="form-label">Password</label>
+                            <input type="password" name="password" id="signup-password" class="form-control" required>
+                        </div>
+                        {% if error and form_type == 'signup' %}
+                            <div class="alert alert-danger py-1 small">{{ error }}</div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-footer mt-4 text-center text-muted">
+                &copy; 2025 TMS Portal. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fleet Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body style="background: #f8f9fa">
+
+<div class="container py-5">
+    <h1 class="text-center mb-5">🚛 Fleet Vehicle & Driver Dashboard</h1>
+
+    <div class="row g-4">
+        <!-- Vehicle Status -->
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Vehicle Status</h5>
+                {% for v in vehicle_status %}
+                    <p><strong>{{v.status}}:</strong> {{v.count}}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Job Status -->
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Job Status</h5>
+                {% for j in job_status %}
+                    <p><strong>{{j.status}}:</strong> {{j.count}}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Freight Summary -->
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Freight Summary</h5>
+                {% for f in freight %}
+                    <p><strong>{{f.category}}:</strong> {{f.count}}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <!-- Fuel Consumption -->
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+                <h5>Fuel Consumption (Litres)</h5>
+                <canvas id="fuelChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Mileage -->
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+                <h5>Average Mileage (Km/L)</h5>
+                <canvas id="mileageChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <!-- Alarms -->
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+                <h5>Alarms per Week</h5>
+                <canvas id="alarmsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Average Unload Time -->
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+                <h5>Average Unload Time (Hours)</h5>
+                <canvas id="unloadChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Fuel Chart
+const fuelCtx = document.getElementById('fuelChart');
+new Chart(fuelCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ fuel['date'] | safe }},
+        datasets: [{
+            label: 'Litres',
+            data: {{ fuel['litres'] | safe }},
+            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        }]
+    }
+});
+
+// Mileage Chart
+const mileageCtx = document.getElementById('mileageChart');
+new Chart(mileageCtx, {
+    type: 'line',
+    data: {
+        labels: {{ mileage['date'] | safe }},
+        datasets: [{
+            label: 'Km/L',
+            data: {{ mileage['mileage'] | safe }},
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.4,
+            fill: false
+        }]
+    }
+});
+
+// Alarms Chart
+const alarmsCtx = document.getElementById('alarmsChart');
+new Chart(alarmsCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ alarms['date'] | safe }},
+        datasets: [{
+            label: 'Alarms',
+            data: {{ alarms['alarms'] | safe }},
+            backgroundColor: 'rgba(255, 99, 132, 0.6)'
+        }]
+    }
+});
+
+// Unload Time Chart
+const unloadCtx = document.getElementById('unloadChart');
+new Chart(unloadCtx, {
+    type: 'line',
+    data: {
+        labels: {{ unload['date'] | safe }},
+        datasets: [{
+            label: 'Hours',
+            data: {{ unload['hours'] | safe }},
+            borderColor: 'rgba(153, 102, 255, 1)',
+            tension: 0.4,
+            fill: false
+        }]
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

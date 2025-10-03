@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold text-primary">
+    <i class="bi bi-truck me-2"></i>Add New Vehicle
+  </h2>
+
+  <form method="POST" class="row g-3 shadow p-4 bg-white rounded">
+    <div class="col-md-6">
+      <label for="vehicle_id" class="form-label">Vehicle ID</label>
+      <input type="text" class="form-control" name="vehicle_id" id="vehicle_id" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="vehicle_type" class="form-label">Vehicle Type</label>
+      <input type="text" class="form-control" name="vehicle_type" id="vehicle_type" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="model" class="form-label">Model</label>
+      <input type="text" class="form-control" name="model" id="model" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="manufacturer" class="form-label">Manufacturer</label>
+      <input type="text" class="form-control" name="manufacturer" id="manufacturer" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="year" class="form-label">Year</label>
+      <input type="number" class="form-control" name="year" id="year" min="1980" max="2100" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="current_mileage" class="form-label">Current Mileage (km)</label>
+      <input type="number" class="form-control" name="current_mileage" id="current_mileage" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="last_service_date" class="form-label">Last Service Date</label>
+      <input type="date" class="form-control" name="last_service_date" id="last_service_date">
+    </div>
+
+    <div class="col-md-6">
+      <label for="next_service_due" class="form-label">Next Service Due</label>
+      <input type="date" class="form-control" name="next_service_due" id="next_service_due">
+    </div>
+
+    <div class="col-md-6">
+      <label for="service_type" class="form-label">Service Type</label>
+      <input type="text" class="form-control" name="service_type" id="service_type">
+    </div>
+
+    <div class="col-md-6">
+      <label for="status" class="form-label">Status</label>
+      <select class="form-select" name="status" id="status">
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+    </div>
+
+    <div class="col-md-6">
+      <label for="parts_replaced" class="form-label">Parts Replaced</label>
+      <input type="text" class="form-control" name="parts_replaced" id="parts_replaced">
+    </div>
+
+    <div class="col-md-6">
+      <label for="service_cost" class="form-label">Service Cost (₹)</label>
+      <input type="number" class="form-control" step="0.01" name="service_cost" id="service_cost">
+    </div>
+
+    <div class="col-md-6">
+      <label for="assigned_driver" class="form-label">Assigned Driver</label>
+      <input type="text" class="form-control" name="assigned_driver" id="assigned_driver">
+    </div>
+
+    <div class="col-md-6">
+      <label for="condition" class="form-label">Condition</label>
+      <input type="text" class="form-control" name="condition" id="condition">
+    </div>
+
+    <div class="col-12">
+      <label for="notes" class="form-label">Notes</label>
+      <textarea class="form-control" name="notes" id="notes" rows="3"></textarea>
+    </div>
+
+    <div class="col-12 d-flex justify-content-between">
+      <a href="{{ url_for('vehicle_maintenance') }}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-success">Add Vehicle</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

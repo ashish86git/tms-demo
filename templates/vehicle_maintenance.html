@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold text-primary">
+    <i class="bi bi-tools me-2"></i>Vehicle Maintenance Management System
+  </h2>
+
+  <!-- Filter Form -->
+  <form method="get" class="row g-3 mb-3">
+    <div class="col-md-3">
+      <input type="text" name="vehicle_id" value="{{ filters.vehicle_id or '' }}" placeholder="Vehicle ID" class="form-control" />
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="assigned_driver" value="{{ filters.assigned_driver or '' }}" placeholder="Assigned Driver" class="form-control" />
+    </div>
+    <div class="col-md-3">
+      <select name="status" class="form-select">
+        <option value="">All Status</option>
+        <option value="Pending" {% if filters.status == 'Pending' %}selected{% endif %}>Pending</option>
+        <option value="Completed" {% if filters.status == 'Completed' %}selected{% endif %}>Completed</option>
+        <option value="In Progress" {% if filters.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+      </select>
+    </div>
+    <div class="col-md-3 d-flex">
+      <button type="submit" class="btn btn-primary me-2">Filter</button>
+      <a href="{{ url_for('vehicle_maintenance') }}" class="btn btn-secondary">Reset</a>
+      <a href="{{ url_for('add_vehicle_form') }}" class="btn btn-success ms-auto">+ Add New</a>
+    </div>
+  </form>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Data Table -->
+  <div class="table-responsive shadow rounded bg-white p-3">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Vehicle ID</th>
+          <th>Type</th>
+          <th>Model</th>
+          <th>Manufacturer</th>
+          <th>Year</th>
+          <th>Current Mileage (km)</th>
+          <th>Last Service Date</th>
+          <th>Next Service Due</th>
+          <th>Service Type</th>
+          <th>Status</th>
+          <th>Parts Replaced</th>
+          <th>Service Cost (₹)</th>
+          <th>Assigned Driver</th>
+          <th>Condition</th>
+          <th>Notes</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in vehicles %}
+        <tr>
+          <td>{{ v.vehicle_id }}</td>
+          <td>{{ v.vehicle_type }}</td>
+          <td>{{ v.model }}</td>
+          <td>{{ v.manufacturer }}</td>
+          <td>{{ v.year }}</td>
+          <td>{{ v.current_mileage }}</td>
+          <td>{{ v.last_service_date.strftime('%Y-%m-%d') if v.last_service_date else '' }}</td>
+          <td>{{ v.next_service_due.strftime('%Y-%m-%d') if v.next_service_due else '' }}</td>
+          <td>{{ v.service_type or '' }}</td>
+          <td>
+            {% if v.status == 'Completed' %}
+              <span class="badge bg-success">{{ v.status }}</span>
+            {% elif v.status == 'Pending' %}
+              <span class="badge bg-warning text-dark">{{ v.status }}</span>
+            {% else %}
+              <span class="badge bg-secondary">{{ v.status }}</span>
+            {% endif %}
+          </td>
+          <td>{{ v.parts_replaced or '' }}</td>
+          <td>{{ "%.2f"|format(v.service_cost) if v.service_cost else "" }}</td>
+          <td>{{ v.assigned_driver }}</td>
+          <td>{{ v.condition }}</td>
+          <td>{{ v.notes or '' }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('delete_vehicle', vehicle_id=v.id) }}" style="display:inline-block" onsubmit="return confirm('Are you sure to delete this record?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+            <a href="{{ url_for('add_service', vehicle_id=v.id) }}" class="btn btn-sm btn-info ms-1">Add Service</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="16" class="text-center">No records found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,339 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+
+  {# ───────────────────────── Flash Modal (Success Only) ───────────────────── #}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      {% if category == 'success' %}
+        <button type="button" class="d-none" id="flashModalBtn" data-bs-toggle="modal" data-bs-target="#flashModal"></button>
+
+        <div class="modal fade" id="flashModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-check-circle-fill me-1"></i> Success</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                {{ message }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('flashModalBtn').click();
+          });
+        </script>
+      {% else %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endwith %}
+
+  {# ───────────────────────── Indent Table ──────────────────────────────── #}
+  {% if indent_data %}
+  <div class="card shadow mb-4 border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0"><i class="bi bi-table me-2"></i> All Submitted Indents</h5>
+      <a href="{{ url_for('export_indents') }}" class="btn btn-light btn-sm">
+        <i class="bi bi-file-earmark-arrow-down me-1"></i> Export to CSV
+      </a>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-striped table-bordered align-middle">
+        <thead class="table-dark">
+          <tr>
+            {% for key in indent_data[0].keys() %}
+              <th>{{ key.replace('_',' ').title() }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in indent_data %}
+          <tr>
+            {% for value in row.values() %}
+              <td>{{ value }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ───────────────────────── Upload Card ──────────────────────────────── #}
+  <div class="card shadow mb-4 border-0">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0"><i class="bi bi-upload me-2"></i> Upload Indent Excel/CSV</h5>
+    </div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('upload_indent') }}" enctype="multipart/form-data">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="bi bi-file-earmark-spreadsheet me-1"></i>File
+            </label>
+            <input type="file" name="file" accept=".xlsx,.xls,.csv" required class="form-control shadow-sm" />
+          </div>
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-info px-4">
+              <i class="bi bi-upload me-1"></i> Upload
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {# ───────────────────────── Master Model Shortcut ────────────────────── #}
+  <div class="mb-4 text-end">
+    <a href="{{ url_for('master_model') }}" class="btn btn-dark">
+      <i class="bi bi-box-seam me-1"></i> Master Model
+    </a>
+  </div>
+
+  {# ───────────────────────── New Indent Form ──────────────────────────── #}
+  <div class="card shadow border-0">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i> Create New Indent</h5>
+    </div>
+    <div class="card-body">
+      <form method="post" class="row g-4">
+
+        {# ── 1st Row ── #}
+        <div class="col-md-3">
+          <label class="form-label">Indent Date</label>
+          <input type="date" name="indent_date" class="form-control shadow-sm" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Indent #</label>
+          <input type="text" name="indent" class="form-control shadow-sm" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Allocation Date</label>
+          <input type="date" name="allocation_date" class="form-control shadow-sm" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Customer Name(s)</label>
+          <div id="customerNameContainer">
+            <div class="input-group mb-2">
+              <input type="text" name="customer_names[]" class="form-control shadow-sm" placeholder="Enter customer name" />
+              <button type="button" class="btn btn-outline-secondary addCustomerName">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {# ── 2nd Row ── #}
+        <div class="col-md-3">
+          <label class="form-label">Range(s)</label>
+          <div id="rangeContainer">
+            <div class="input-group mb-2">
+              <select name="ranges[]" required class="form-select shadow-sm">
+                <option value="">-- Select Range --</option>
+                <option value="0-100">0-100</option>
+                <option value="101-250">101-250</option>
+                <option value="251-400">251-400</option>
+                <option value="custom">Customize</option>
+              </select>
+              <button type="button" class="btn btn-outline-secondary addRange">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Pickup Location</label>
+          <input type="text" name="pickup_location" value="Sonipat" required class="form-control shadow-sm" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">
+            Drop Location(s)
+            <i class="bi bi-geo-alt-fill" data-bs-toggle="tooltip" title="One or more unloading points"></i>
+          </label>
+          <div id="dropLocationContainer">
+            <div class="input-group mb-2">
+              <input type="text" name="drop_locations[]" class="form-control shadow-sm" placeholder="Enter drop location" />
+              <button type="button" class="btn btn-outline-secondary addDropLocation">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {# ── 3rd Row ── #}
+        <div class="col-md-3">
+          <label class="form-label">Vehicle Number</label>
+          <select name="vehicle_number" required class="form-select shadow-sm">
+            <option value="">-- Select Vehicle --</option>
+            {% for v in fleet_data %}
+              <option value="{{ v }}">{{ v }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Vehicle Model</label>
+          <input type="text" name="vehicle_model" class="form-control shadow-sm" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Vehicle Based</label>
+          <input type="text" name="vehicle_based" class="form-control shadow-sm" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">LR No.(s)</label>
+          <div id="lrNoContainer">
+            <div class="input-group mb-2">
+              <input type="text" name="lr_nos[]" class="form-control shadow-sm" placeholder="Enter LR No." />
+              <button type="button" class="btn btn-outline-secondary addLrNo">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {# ── 4th Row ── #}
+        <div class="col-md-3">
+          <label class="form-label">Material</label>
+          <input type="text" name="material" class="form-control shadow-sm" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Load per Bucket/Barrels (Kg)</label>
+          <div id="loadPerBucketContainer">
+            <div class="input-group mb-2">
+              <input type="number" name="load_per_bucket[]" class="form-control shadow-sm loadPerBucketInput" placeholder="Kg per bucket" />
+              <button type="button" class="btn btn-outline-secondary addLoadPerBucket">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">No. Buckets/Barrels</label>
+          <input type="number" name="no_of_buckets" id="noOfBuckets" class="form-control shadow-sm" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Total Load (Kg)</label>
+          <input type="number" name="t_load" id="totalLoad" class="form-control shadow-sm" readonly />
+        </div>
+
+        {# ── 5th Row ── #}
+        <div class="col-md-3">
+          <label class="form-label">POD Received</label>
+          <select name="pod_received" class="form-select shadow-sm">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Freight Tiger No.</label>
+          <input type="text" name="freight_tiger_number" class="form-control shadow-sm" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Freight Tiger Month</label>
+          <input type="month" name="freight_tiger_month" class="form-control shadow-sm" />
+        </div>
+
+        {# ── Submit ── #}
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-success px-5 mt-3">
+            <i class="bi bi-plus-circle me-1"></i> Create Indent
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+{# ── Scripts ── #}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const totalLoad = document.getElementById('totalLoad');
+    const noOfBuckets = document.getElementById('noOfBuckets');
+
+    function calculateTotalLoad() {
+      const loadInputs = document.querySelectorAll('.loadPerBucketInput');
+      let totalPerBucket = 0;
+      loadInputs.forEach(inp => {
+        totalPerBucket += parseFloat(inp.value) || 0;
+      });
+      const buckets = parseFloat(noOfBuckets.value) || 0;
+      totalLoad.value = totalPerBucket * buckets;
+    }
+
+    // listen to inputs
+    document.body.addEventListener('input', function(e){
+      if(e.target.classList.contains('loadPerBucketInput') || e.target.id === 'noOfBuckets'){
+        calculateTotalLoad();
+      }
+    });
+
+    // run once at page load
+    calculateTotalLoad();
+
+    // generic setup for add/remove buttons
+    function setupContainer(containerId, addClass, inputHtml) {
+      const container = document.getElementById(containerId);
+      container.addEventListener("click", function (e) {
+        if (e.target.closest("." + addClass)) {
+          const newInputGroup = document.createElement("div");
+          newInputGroup.className = "input-group mb-2";
+          newInputGroup.innerHTML = inputHtml;
+          container.appendChild(newInputGroup);
+        }
+        if (e.target.closest(".remove" + addClass)) {
+          e.target.closest(".input-group").remove();
+          calculateTotalLoad(); // recalc after removing
+        }
+      });
+    }
+
+    setupContainer("dropLocationContainer", "addDropLocation", `
+      <input type="text" name="drop_locations[]" class="form-control shadow-sm" placeholder="Enter drop location" />
+      <button type="button" class="btn btn-outline-danger removeaddDropLocation"><i class="bi bi-dash"></i></button>`);
+
+    setupContainer("customerNameContainer", "addCustomerName", `
+      <input type="text" name="customer_names[]" class="form-control shadow-sm" placeholder="Enter customer name" />
+      <button type="button" class="btn btn-outline-danger removeaddCustomerName"><i class="bi bi-dash"></i></button>`);
+
+    setupContainer("rangeContainer", "addRange", `
+      <select name="ranges[]" required class="form-select shadow-sm">
+        <option value="">-- Select Range --</option>
+        <option value="0-100">0-100</option>
+        <option value="101-250">101-250</option>
+        <option value="251-400">251-400</option>
+        <option value="custom">Customize</option>
+      </select>
+      <button type="button" class="btn btn-outline-danger removeaddRange"><i class="bi bi-dash"></i></button>`);
+
+    setupContainer("lrNoContainer", "addLrNo", `
+      <input type="text" name="lr_nos[]" class="form-control shadow-sm" placeholder="Enter LR No." />
+      <button type="button" class="btn btn-outline-danger removeaddLrNo"><i class="bi bi-dash"></i></button>`);
+
+    setupContainer("loadPerBucketContainer", "addLoadPerBucket", `
+      <input type="number" name="load_per_bucket[]" class="form-control shadow-sm loadPerBucketInput" placeholder="Kg per bucket" />
+      <button type="button" class="btn btn-outline-danger removeaddLoadPerBucket"><i class="bi bi-dash"></i></button>`);
+  });
+</script>
+
+{% endblock %}

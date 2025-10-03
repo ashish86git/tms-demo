@@ -1,0 +1,114 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Header and Create Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="bi bi-exclamation-circle-fill me-2"></i> Issue Management</h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createIssueModal">
+            <i class="bi bi-plus-circle"></i> Create Issue
+        </button>
+    </div>
+
+    <!-- Smart Features / Services Display -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-cpu-fill text-primary fs-3 mb-2"></i>
+                    <h5 class="card-title">IoT Enabled Tickets</h5>
+                    <p class="text-success fw-bold mb-0"><i class="bi bi-check-circle-fill me-1"></i> Enabled</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-geo-alt-fill text-danger fs-3 mb-2"></i>
+                    <h5 class="card-title">GPS Enabled Tickets</h5>
+                    <p class="text-success fw-bold mb-0"><i class="bi bi-check-circle-fill me-1"></i> Enabled</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-diagram-3-fill text-warning fs-3 mb-2"></i>
+                    <h5 class="card-title">Escalation Matrix</h5>
+                    <p class="text-success fw-bold mb-0"><i class="bi bi-check-circle-fill me-1"></i> Configured</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Vehicle</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in issues %}
+                <tr>
+                    <td>{{ issue.id }}</td>
+                    <td>{{ issue.title }}</td>
+                    <td>{{ issue.vehicle_number }}</td>
+                    <td>{{ issue.location }}</td>
+                    <td>
+                        <span class="badge {% if issue.status == 'Open' %}bg-danger{% elif issue.status == 'In Progress' %}bg-warning{% else %}bg-success{% endif %}">
+                            {{ issue.status }}
+                        </span>
+                    </td>
+                    <td>{{ issue.assigned_to }}</td>
+                    <td>{{ issue.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Issue Modal -->
+<div class="modal fade" id="createIssueModal" tabindex="-1" aria-labelledby="createIssueModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" action="/issue-management/create">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createIssueModalLabel">Create New Issue</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Issue Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicle_number" class="form-label">Vehicle Number</label>
+                        <input type="text" class="form-control" id="vehicle_number" name="vehicle_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="assigned_to" class="form-label">Assign To</label>
+                        <input type="text" class="form-control" id="assigned_to" name="assigned_to">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create Issue</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

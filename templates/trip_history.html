@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid">
+  <h2 class="mb-4 fw-bold text-dark"><i class="bi bi-clock-history text-secondary me-2"></i>Trip History (Optimized Routes)</h2>
+  <a href="/optimize" class="btn btn-sm btn-dark mb-3"><i class="bi bi-arrow-left-circle"></i> Back to Optimize</a>
+
+  <!-- Filter Form -->
+  <form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+      <label for="vehicle_id" class="form-label fw-semibold">Vehicle ID</label>
+      <select name="vehicle_id" id="vehicle_id" class="form-select">
+        <option value="">All Vehicles</option>
+        {% for vid in all_vehicle_ids %}
+          <option value="{{ vid }}" {% if vid == selected_vehicle_id %}selected{% endif %}>{{ vid }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label for="driver_name" class="form-label fw-semibold">Driver Name</label>
+      <select name="driver_name" id="driver_name" class="form-select">
+        <option value="">All Drivers</option>
+        {% for dname in all_driver_names %}
+          <option value="{{ dname }}" {% if dname == selected_driver_name %}selected{% endif %}>{{ dname }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-warning w-100"><i class="bi bi-funnel-fill"></i> Filter</button>
+    </div>
+    <div class="col-md-2">
+      <a href="/trip-history" class="btn btn-secondary w-100"><i class="bi bi-x-circle"></i> Reset</a>
+    </div>
+  </form>
+
+  <div class="card border-0 shadow-sm rounded-4 p-3">
+    {% if routes and routes|length > 0 %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Vehicle</th>
+            <th>Driver</th>
+            <th>Date</th>
+            <th>Pickup</th>
+            <th>Drop</th>
+            <th>Distance (km)</th>
+            <th>Fuel Used (L)</th>
+            <th class="text-end">Fuel Cost (₹)</th>
+            <th>Expected Avg</th>
+            <th>Actual Avg</th>
+            <th>Service</th>
+            <th class="text-end">Amount (₹)</th>
+            <th class="text-end">Profit (₹)</th>
+            <th>Total Dist (km)</th>
+            <th>Travel Time (hrs)</th>
+            <th>Est. Fuel (L)</th>
+            <th>Delivery Window</th>
+            <th>Orders</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trip in routes %}
+          <tr class="{% if trip.service_suggestion == 'Yes' %}table-danger{% endif %}">
+            <td>{{ trip.vehicle_id }}</td>
+            <td>{{ trip.driver_name }}</td>
+            <td>{{ trip.date }}</td>
+            <td>{{ trip.pickup }}</td>
+            <td>{{ trip.drop }}</td>
+            <td>{{ trip.distance_km }}</td>
+            <td>{{ trip.fuel_used_l }}</td>
+            <td class="text-end fw-semibold">₹{{ trip.fuel_cost }}</td>
+            <td>{{ trip.avg_expected }}</td>
+            <td>{{ trip.avg_actual }}</td>
+            <td>
+              {% if trip.service_suggestion == 'Yes' %}
+                <span class="badge bg-danger">Yes</span>
+              {% else %}
+                <span class="badge bg-success">No</span>
+              {% endif %}
+            </td>
+            <td class="text-end fw-semibold">₹{{ trip.amount }}</td>
+            <td class="text-end fw-semibold">₹{{ trip.profit }}</td>
+            <td>{{ trip.total_distance }}</td>
+            <td>{{ trip.estimated_travel_time_hrs }}</td>
+            <td>{{ trip.estimated_fuel_liters }}</td>
+            <td>{{ trip.delivery_window }}</td>
+            <td>{{ trip.orders }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-3">No optimized routes available.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

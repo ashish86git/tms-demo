@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TMS Route Optimization</title>
+</head>
+<body>
+    <h2>Upload Fleet and Order Files</h2>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <label>Fleet CSV:</label>
+        <input type="file" name="fleet_file" required><br><br>
+        <label>Order CSV:</label>
+        <input type="file" name="order_file" required><br><br>
+        <input type="submit" value="Optimize Routes">
+    </form>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<<<<<<< HEAD
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">
+        <i class="bi bi-pencil-square text-primary me-2"></i> Edit Vehicle
+    </h2>
+
+    <form method="POST">
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label">Vehicle ID</label>
+                <input type="text" class="form-control" value="{{ vehicle.vehicle_id }}" disabled>
+            </div>
+
+            <div class="col-md-6">
+                <label for="vehicle_name" class="form-label">Vehicle Name</label>
+                <input type="text" name="vehicle_name" class="form-control" value="{{ vehicle.vehicle_name }}" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="driver_id" class="form-label">Driver ID</label>
+                <input type="text" name="driver_id" class="form-control" value="{{ vehicle.driver_id }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="make" class="form-label">Make</label>
+                <input type="text" name="make" class="form-control" value="{{ vehicle.make }}" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="model" class="form-label">Model</label>
+                <input type="text" name="model" class="form-control" value="{{ vehicle.model }}" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="vin" class="form-label">VIN</label>
+                <input type="text" name="vin" class="form-control" value="{{ vehicle.vin }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="type" class="form-label">Type</label>
+                <select name="type" id="type" class="form-select">
+                    {% set vehicle_types = [
+                        'Truck', 'Van', 'Trailer', 'Pickup', 'Bus', 'Car',
+                        'Motorcycle', 'Forklift', 'Container'
+                    ] %}
+                    {% for vt in vehicle_types %}
+                        <option value="{{ vt }}" {% if vehicle.type == vt %}selected{% endif %}>{{ vt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="group" class="form-label">Group</label>
+                <input type="text" name="group" class="form-control" value="{{ vehicle.group }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="status" class="form-label">Status</label>
+                <input type="text" name="status" class="form-control" value="{{ vehicle.status }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="license_plate" class="form-label">License Plate</label>
+                <input type="text" name="license_plate" class="form-control" value="{{ vehicle.license_plate }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="current_meter" class="form-label">Current Meter</label>
+                <input type="number" name="current_meter" class="form-control" value="{{ vehicle.current_meter }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="capacity_weight_kg" class="form-label">Capacity Weight (kg)</label>
+                <input type="number" step="0.01" name="capacity_weight_kg" class="form-control" value="{{ vehicle.capacity_weight_kg }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="capacity_vol_cbm" class="form-label">Capacity Volume (cbm)</label>
+                <input type="number" step="0.01" name="capacity_vol_cbm" class="form-control" value="{{ vehicle.capacity_vol_cbm }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="documents_expiry" class="form-label">Documents Expiry</label>
+                <input type="date" name="documents_expiry" class="form-control" value="{{ vehicle.documents_expiry }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="date_of_join" class="form-label">Date of Join</label>
+                <input type="date" name="date_of_join" class="form-control" value="{{ vehicle.date_of_join }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="avg" class="form-label">Average</label>
+                <input type="number" step="0.01" name="avg" class="form-control" value="{{ vehicle.avg }}">
+            </div>
+
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="/fleet_master" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save me-1"></i> Update Vehicle
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+=======
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">
+        <i class="bi bi-pencil-square text-primary me-2"></i> Edit Vehicle
+    </h2>
+
+    <form method="POST">
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label">Vehicle ID</label>
+                <input type="text" class="form-control" value="{{ vehicle.vehicle_id }}" disabled>
+            </div>
+
+            <div class="col-md-6">
+                <label for="vehicle_name" class="form-label">Vehicle Name</label>
+                <input type="text" name="vehicle_name" class="form-control" value="{{ vehicle.vehicle_name }}" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="driver_id" class="form-label">Driver ID</label>
+                <input type="text" name="driver_id" class="form-control" value="{{ vehicle.driver_id }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="make" class="form-label">Make</label>
+                <input type="text" name="make" class="form-control" value="{{ vehicle.make }}" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="model" class="form-label">Model</label>
+                <input type="text" name="model" class="form-control" value="{{ vehicle.model }}" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="vin" class="form-label">VIN</label>
+                <input type="text" name="vin" class="form-control" value="{{ vehicle.vin }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="type" class="form-label">Type</label>
+                <select name="type" id="type" class="form-select">
+                    {% set vehicle_types = [
+                        'Truck', 'Van', 'Trailer', 'Pickup', 'Bus', 'Car',
+                        'Motorcycle', 'Forklift', 'Container'
+                    ] %}
+                    {% for vt in vehicle_types %}
+                        <option value="{{ vt }}" {% if vehicle.type == vt %}selected{% endif %}>{{ vt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="group" class="form-label">Group</label>
+                <input type="text" name="group" class="form-control" value="{{ vehicle.group }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="status" class="form-label">Status</label>
+                <input type="text" name="status" class="form-control" value="{{ vehicle.status }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="license_plate" class="form-label">License Plate</label>
+                <input type="text" name="license_plate" class="form-control" value="{{ vehicle.license_plate }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="current_meter" class="form-label">Current Meter</label>
+                <input type="number" name="current_meter" class="form-control" value="{{ vehicle.current_meter }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="capacity_weight_kg" class="form-label">Capacity Weight (kg)</label>
+                <input type="number" step="0.01" name="capacity_weight_kg" class="form-control" value="{{ vehicle.capacity_weight_kg }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="capacity_vol_cbm" class="form-label">Capacity Volume (cbm)</label>
+                <input type="number" step="0.01" name="capacity_vol_cbm" class="form-control" value="{{ vehicle.capacity_vol_cbm }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="documents_expiry" class="form-label">Documents Expiry</label>
+                <input type="date" name="documents_expiry" class="form-control" value="{{ vehicle.documents_expiry }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="date_of_join" class="form-label">Date of Join</label>
+                <input type="date" name="date_of_join" class="form-control" value="{{ vehicle.date_of_join }}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="avg" class="form-label">Average</label>
+                <input type="number" step="0.01" name="avg" class="form-control" value="{{ vehicle.avg }}">
+            </div>
+
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="/fleet_master" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save me-1"></i> Update Vehicle
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+>>>>>>> 40c2f3a2a5a30ae7630fc05918625d6143f376f8
